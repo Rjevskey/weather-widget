@@ -15,6 +15,10 @@
     border: none;
     border-radius: 10px;
 
+    display: flex;
+    gap: 9px;
+    align-items: center;
+
     font-family: var(--font);
     font-size: 20px;
     font-weight: 600;
