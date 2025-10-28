@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+defineEmits(["click"]);
+</script>
 
 <template>
-    <button class="button">
+    <button class="button" @click="$emit('click')">
         <div>
             <slot name="icon"></slot>
         </div>
@@ -11,11 +13,15 @@
 
 <style scoped>
 .button {
+    width: 100%;
+    height: 53px;
     padding: 14px;
+
     border: none;
     border-radius: 10px;
 
     display: flex;
+    justify-content: center;
     gap: 9px;
     align-items: center;
 
