@@ -10,6 +10,8 @@ const emit = defineEmits({
     },
 });
 
+let city = ref("");
+
 let isEdited = ref(false);
 
 function select() {
@@ -24,8 +26,9 @@ function edit() {
 
 <template>
     <div class="city-select">
+        {{ city }}
         <div v-show="isEdited" class="city-input">
-            <Input placeholder="Введите город" />
+            <Input placeholder="Введите город" v-model="city" />
             <MyButton @click="select()"> Сохранить </MyButton>
         </div>
         <MyButton v-show="!isEdited" @click="edit()">

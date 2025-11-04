@@ -6,13 +6,25 @@ import { computed, ref } from "vue";
 let savedCity = ref("Moscow");
 let data = ref({
     humidity: 90,
+    rain: 0,
+    wind: 3,
 });
 
 const dataModified = computed(() => {
-    return {
-        label: "Влажность",
-        stat: data.value.humidity + "%",
-    };
+    return [
+        {
+            label: "Влажность",
+            stat: data.value.humidity + "%",
+        },
+        {
+            label: "Осадки",
+            stat: data.value.rain + "%",
+        },
+        {
+            label: "Ветер",
+            stat: data.value.wind + "м/ч",
+        },
+    ];
 });
 
 async function getCity(city) {
@@ -24,8 +36,7 @@ async function getCity(city) {
 <template>
     <main class="main">
         <div id="city">{{ savedCity }}</div>
-        <Stat v-bind="dataModified" />
-        <Stat label="Осадки" stat="0%" />
+        <Stat v-for="item in dataModified" v-bind="item" :key="item.label" />
         <SitySelect @select-city="getCity"></SitySelect>
     </main>
 </template>
