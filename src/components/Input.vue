@@ -1,9 +1,19 @@
 <script setup>
-const data = defineModel({ type: String, required: true });
+const props = defineProps(["modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
+
+const updateValue = (event) => {
+    emit("update:modelValue", event.target.value);
+};
 </script>
 
 <template>
-    <input v-model="data" class="input" />
+    <input
+        class="input"
+        :value="modelValue"
+        @input="updateValue"
+        placeholder="Введите город"
+    />
 </template>
 
 <style scoped>

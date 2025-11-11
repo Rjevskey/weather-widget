@@ -1,43 +1,54 @@
 <script setup>
 import Stat from "./components/Stat.vue";
 import SitySelect from "./components/SitySelect.vue";
-import { computed, ref } from "vue";
+import WeatherApi from "./components/WeatherApi.vue";
+import { computed, ref, onMounted } from "vue";
 
 let savedCity = ref("Moscow");
-let data = ref({
-    humidity: 90,
-    rain: 0,
-    wind: 3,
-});
+const weatherApi = ref();
 
 const dataModified = computed(() => {
+    if (!weatherApi.value?.weatherData) return [];
+
+    const data = weatherApi.value.weatherData;
     return [
         {
             label: "Влажность",
-            stat: data.value.humidity + "%",
+            stat: Math.round(data.humidity) + "%",
         },
         {
             label: "Осадки",
-            stat: data.value.rain + "%",
+            stat: data.precipitation + "мм",
         },
         {
             label: "Ветер",
-            stat: data.value.wind + "м/ч",
+            stat: Math.round(data.windspeed) + "м/с",
         },
     ];
 });
 
 async function getCity(city) {
     savedCity.value = city;
-    data.value.humidity = 20;
+    await weatherApi.value.fetchWeather(city);
 }
+
+onMounted(() => {
+    weatherApi.value.fetchWeather(savedCity.value);
+});
 </script>
 
 <template>
     <main class="main">
         <div id="city">{{ savedCity }}</div>
+        <!-- 🎯 ДОБАВЛЯЕМ отображение температуры из weatherApi -->
+        <div v-if="weatherApi?.weatherData" class="temperature">
+            🌡️ {{ Math.round(weatherApi.weatherData.temperature) }}°C
+        </div>
         <Stat v-for="item in dataModified" v-bind="item" :key="item.label" />
         <SitySelect @select-city="getCity"></SitySelect>
+
+        <!-- 🎯 ДОБАВЛЯЕМ компонент WeatherApi в шаблон -->
+        <WeatherApi ref="weatherApi" />
     </main>
 </template>
 
@@ -46,5 +57,11 @@ async function getCity(city) {
     background: var(--color-bg-main);
     padding: 60px 50px;
     border-radius: 25px;
+}
+
+.temperature {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 </style>
