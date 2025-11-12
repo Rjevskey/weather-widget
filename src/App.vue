@@ -3,12 +3,13 @@ import Stat from "./components/Stat.vue";
 import SitySelect from "./components/SitySelect.vue";
 import WeatherApi from "./components/WeatherApi.vue";
 import { computed, ref, onMounted } from "vue";
+import DayCard from "./components/DayCard.vue";
 
 let savedCity = ref("Moscow");
 const weatherApi = ref();
 
 const dataModified = computed(() => {
-    if (!weatherApi.value?.weatherData) return [];
+    return [];
 
     const data = weatherApi.value.weatherData;
     return [
@@ -39,15 +40,21 @@ onMounted(() => {
 
 <template>
     <main class="main">
+        <div v-if="data">
+            <DayCard weather-code="1000" temp="30" :date="new Date()" />
+            <Stat
+                v-for="item in dataModified"
+                v-bind="item"
+                :key="item.label"
+            />
+        </div>
         <div id="city">{{ savedCity }}</div>
-        <!-- 🎯 ДОБАВЛЯЕМ отображение температуры из weatherApi -->
+
         <div v-if="weatherApi?.weatherData" class="temperature">
             🌡️ {{ Math.round(weatherApi.weatherData.temperature) }}°C
         </div>
-        <Stat v-for="item in dataModified" v-bind="item" :key="item.label" />
         <SitySelect @select-city="getCity"></SitySelect>
 
-        <!-- 🎯 ДОБАВЛЯЕМ компонент WeatherApi в шаблон -->
         <WeatherApi ref="weatherApi" />
     </main>
 </template>
