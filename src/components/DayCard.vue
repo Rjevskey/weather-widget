@@ -24,6 +24,8 @@ const { weatherCode, temp, date } = defineProps({
 
 <style scoped>
 .day-card {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: center;
