@@ -4,21 +4,46 @@ import IconRain from "./icon/weather/iconRain.vue";
 import IconSun from "./icon/weather/IconSun.vue";
 
 const { weatherCode, temp, date } = defineProps({
-    weatherCode: String,
+    weatherCode: Number,
     temp: Number,
     date: Date,
 });
+
+const formattedTemp = Math.round(temp);
+
+// Добавляем эмит для отправки данных родителю
+const emit = defineEmits(["day-click"]);
+
+function handleClick() {
+    emit("day-click", {
+        date: date,
+        temp: temp,
+        weatherCode: weatherCode,
+    });
+}
 </script>
 
 <template>
-    <button class="day-card">
-        <IconSun v-if="weatherCode == 1000" />
-        <IconCloud v-if="weatherCode == 1003" />
-        <IconRain v-if="weatherCode == 1009" />
+    <button class="day-card" @click="handleClick">
+        <IconSun v-if="weatherCode === 0 || weatherCode === 1" />
+        <IconCloud v-else-if="weatherCode >= 2 && weatherCode <= 3" />
+        <IconRain
+            v-else-if="
+                (weatherCode >= 51 && weatherCode <= 67) ||
+                (weatherCode >= 80 && weatherCode <= 82) ||
+                (weatherCode >= 95 && weatherCode <= 99)
+            "
+        />
+        <IconCloud v-else />
+
         <div class="day-card__day">
             {{ date.toLocaleDateString("ru-Ru", { weekday: "short" }) }}
         </div>
-        <div class="day-card__temp">{{ temp }} °C</div>
+
+        <div class="day-card__temp">
+            <span class="temp-value">{{ formattedTemp }}</span>
+            <span class="temp-unit">°C</span>
+        </div>
     </button>
 </template>
 
@@ -54,5 +79,17 @@ const { weatherCode, temp, date } = defineProps({
 .day-card__temp {
     font-size: 20px;
     font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.temp-value {
+    font-size: 20px;
+}
+
+.temp-unit {
+    font-size: 16px;
+    opacity: 0.8;
 }
 </style>

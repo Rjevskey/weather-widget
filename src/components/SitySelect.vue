@@ -26,6 +26,10 @@ function select() {
 function edit() {
     isEdited.value = true;
 }
+
+const vFocus = {
+    mounted: (el) => el.focus(),
+};
 </script>
 
 <template>
