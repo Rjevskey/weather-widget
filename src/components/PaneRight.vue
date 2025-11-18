@@ -8,14 +8,16 @@ import { computed, ref, onMounted } from "vue";
 const props = defineProps({
     savedCity: String,
     getCity: Function,
+    weatherData: Object,
+    selectedDate: String,
 });
 
 const weatherApi = ref();
 
 const dataModified = computed(() => {
-    if (!weatherApi.value?.weatherData) return [];
+    if (!props.weatherData) return [];
 
-    const data = weatherApi.value.weatherData.current;
+    const data = props.weatherData.current;
     return [
         {
             label: "Влажность",
@@ -39,21 +41,24 @@ onMounted(() => {
 });
 
 const emit = defineEmits(["day-click"]);
+const selectedDate = ref(new Date().toISOString().split("T")[0]);
 
 function handleDayClick(day) {
+    selectedDate.value = day.date;
+    console.log("Selected date:", day.date);
     emit("day-click", {
-        date: dayData.date,
-        temp: dayData.temp,
-        weatherCode: dayData.weatherCode,
+        date: day.date,
+        temp: day.day.avgtemp_c,
+        weatherCode: day.day.condition.code,
     });
 }
 </script>
 
 <template>
     <div class="right">
-        <div v-if="weatherApi?.weatherData" class="state">
+        <div v-if="props.weatherData" class="state">
             <div class="temperature">
-                🌡️ {{ Math.round(weatherApi.weatherData.current.temp_c) }}°C
+                🌡️ {{ Math.round(props.weatherData.current.temp_c) }}°C
             </div>
             <div id="city">{{ savedCity }}</div>
             <div class="stat-list">
@@ -64,19 +69,22 @@ function handleDayClick(day) {
                 />
             </div>
             <div class="day-card-list">
-                <DayCard
-                    v-for="item in weatherApi.weatherData.forecast.forecastday"
-                    :key="item.date"
-                    :weather-code="item.day.condition.code"
-                    :temp="item.day.avgtemp_c"
-                    :date="new Date(item.date)"
-                    @day-click="handleDayClick(item)"
-                />
+                <div class="day-card-list">
+                    <DayCard
+                        v-for="item in props.weatherData.forecast.forecastday"
+                        :is-selected="item.date === selectedDate"
+                        :key="item.date"
+                        :weather-code="item.day.condition.code"
+                        :temp="item.day.avgtemp_c"
+                        :date="new Date(item.date)"
+                        @day-click="handleDayClick(item)"
+                    />
+                </div>
             </div>
         </div>
-
-        <SitySelect @select-city="getCity"></SitySelect>
-        <WeatherApi ref="weatherApi" />
+        <div class="city-select-wrapper">
+            <SitySelect @select-city="getCity"></SitySelect>
+        </div>
     </div>
 </template>
 
@@ -108,11 +116,16 @@ function handleDayClick(day) {
 
 .day-card-list {
     display: flex;
-    gap: 5px;
+    justify-content: space-around;
+    gap: 10px;
 }
 
 #city {
     font-size: 20px;
     font-weight: 600;
+}
+
+.city-select-wrapper {
+    margin-top: 40px;
 }
 </style>

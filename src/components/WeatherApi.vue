@@ -100,3 +100,7 @@ defineExpose({
     fetchWeather,
 });
 </script>
+
+<template></template>
+
+<style scoped></style>

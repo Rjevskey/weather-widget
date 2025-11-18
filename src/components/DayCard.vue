@@ -7,11 +7,11 @@ const { weatherCode, temp, date } = defineProps({
     weatherCode: Number,
     temp: Number,
     date: Date,
+    isSelected: Boolean,
 });
 
 const formattedTemp = Math.round(temp);
 
-// Добавляем эмит для отправки данных родителю
 const emit = defineEmits(["day-click"]);
 
 function handleClick() {
@@ -24,17 +24,28 @@ function handleClick() {
 </script>
 
 <template>
-    <button class="day-card" @click="handleClick">
-        <IconSun v-if="weatherCode === 0 || weatherCode === 1" />
-        <IconCloud v-else-if="weatherCode >= 2 && weatherCode <= 3" />
+    <button
+        class="day-card"
+        @click="handleClick"
+        :class="{ selected: isSelected }"
+    >
+        <IconSun
+            v-if="weatherCode === 0 || weatherCode === 1"
+            :class="{ 'icon-selected': isSelected }"
+        />
+        <IconCloud
+            v-else-if="weatherCode >= 2 && weatherCode <= 3"
+            :class="{ 'icon-selected': isSelected }"
+        />
         <IconRain
             v-else-if="
                 (weatherCode >= 51 && weatherCode <= 67) ||
                 (weatherCode >= 80 && weatherCode <= 82) ||
                 (weatherCode >= 95 && weatherCode <= 99)
             "
+            :class="{ 'icon-selected': isSelected }"
         />
-        <IconCloud v-else />
+        <IconCloud v-else :class="{ 'icon-selected': isSelected }" />
 
         <div class="day-card__day">
             {{ date.toLocaleDateString("ru-Ru", { weekday: "short" }) }}
@@ -68,6 +79,10 @@ function handleClick() {
     background-color: var(--color-bg-card);
 }
 
+.day-card.selected {
+    background: #3a434f;
+    color: black;
+}
 .day-card:hover {
     background-color: #3a434f;
 }
@@ -91,5 +106,9 @@ function handleClick() {
 .temp-unit {
     font-size: 16px;
     opacity: 0.8;
+}
+
+.day-card.selected :deep(svg) {
+    filter: brightness(0);
 }
 </style>

@@ -20,7 +20,7 @@ const updateValue = (event) => {
 .input {
     width: 260px;
     height: 53px;
-    padding: 15px 20px;
+    padding: 0px 20px;
 
     color: var(--color-primary);
     background: var(--color-bg-card);

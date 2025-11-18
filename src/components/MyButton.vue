@@ -15,7 +15,7 @@ defineEmits(["click"]);
 .button {
     width: 100%;
     height: 53px;
-    padding: 14px;
+    padding: 0px;
 
     border: none;
     border-radius: 10px;

@@ -34,7 +34,6 @@ const vFocus = {
 
 <template>
     <div class="city-select">
-        {{ city }}
         <div v-show="isEdited" class="city-input" @keyup.enter="select()">
             <Input placeholder="Введите город" v-model="city" />
             <MyButton @click="select()"> Сохранить </MyButton>
@@ -51,6 +50,7 @@ const vFocus = {
 <style scoped>
 .city-input {
     display: flex;
+    align-items: stretch;
 
     gap: 12px;
 }

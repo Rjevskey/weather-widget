@@ -6,6 +6,7 @@ import WeatherApi from "./components/WeatherApi.vue";
 
 let savedCity = ref("Moscow");
 const weatherApi = ref(null);
+let weatherData = ref(null);
 
 let leftPanelData = ref({
     date: new Date(),
@@ -18,11 +19,16 @@ async function getCity(city) {
     savedCity.value = city;
     leftPanelData.value.city = city;
     await weatherApi.value.fetchWeather(city);
+    weatherData.value = weatherApi.value.weatherData;
 }
 
+const selectedDate = ref(new Date().toISOString().split("T")[0]);
+
 function handleDayClick(dayData) {
+    selectedDate.value = dayData.date;
+    console.log("dayData:", dayData);
     leftPanelData.value = {
-        date: dayData.date,
+        date: new Date(dayData.date),
         temp: dayData.temp,
         weatherCode: dayData.weatherCode,
         city: savedCity.value,
@@ -30,6 +36,7 @@ function handleDayClick(dayData) {
 }
 onMounted(() => {
     weatherApi.value.fetchWeather(savedCity.value);
+    weatherData.value = weatherApi.value.weatherData;
 });
 </script>
 
@@ -39,6 +46,8 @@ onMounted(() => {
         <PaneRight
             :savedCity="savedCity"
             :getCity="getCity"
+            :weatherData="weatherData"
+            :selectedDate="selectedDate"
             @day-click="handleDayClick"
         />
         <WeatherApi ref="weatherApi" />
